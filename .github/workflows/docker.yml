@@ -3,12 +3,6 @@ name: Server
 on:
   push:
 
-permissions:
-  contents: read
-  packages: write
-  attestations: write
-  id-token: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,7 +17,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ghcr.io/${{ github.repository }}
+            ghcr.io/ifluxo/spotify-tokener
           tags: |
             type=ref,event=branch
             type=ref,event=tag
@@ -41,7 +35,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
