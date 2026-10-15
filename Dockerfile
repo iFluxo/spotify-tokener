@@ -1,25 +1,22 @@
-FROM --platform=$BUILDPLATFORM golang:1.24-alpine AS build
+FROM --platform=$BUILDPLATFORM oven/bun:1.4-alpine AS build
 
-WORKDIR /build
+WORKDIR /app
 
-COPY go.mod ./
+COPY package.json bun.lock ./
 
-RUN go mod download
+RUN bun install --frozen-lockfile --omit=dev
 
-COPY . .
+COPY src ./src
 
-ARG TARGETOS
-ARG TARGETARCH
+FROM oven/bun:1.4-alpine
 
-RUN --mount=type=cache,target=/root/.cache/go-build \
-    --mount=type=cache,target=/go/pkg \
-    CGO_ENABLED=0 \
-    GOOS=$TARGETOS \
-    GOARCH=$TARGETARCH \
-    go build -o spotify-tokener github.com/topi314/spotify-tokener
+WORKDIR /app
 
-FROM chromedp/headless-shell
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/src ./src
+COPY --from=build /app/package.json ./package.json
 
-COPY --from=build /build/spotify-tokener /bin/spotify-tokener
+ENV SPOTIFY_TOKENER_ADDR=0.0.0.0:8080
+EXPOSE 8080
 
-ENTRYPOINT ["/bin/spotify-tokener"]
+ENTRYPOINT ["bun", "run", "start"]
