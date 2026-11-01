@@ -7,7 +7,7 @@ export interface Config {
   readonly requestTimeoutMs: number;
 }
 
-const DEFAULT_ADDR = "0.0.0.0:8080";
+const DEFAULT_ADDR = Bun.env.DEFAULT_ADDRESS ?? "0.0.0.0:4000";
 const DEFAULT_LOG_LEVEL: LogLevel = "INFO";
 const DEFAULT_TIMEOUT_MS = 30_000;
 
@@ -39,7 +39,7 @@ export function parseAddr(addr: string): { hostname: string; port: number } {
 }
 
 export function loadConfig(env: Record<string, string | undefined> = Bun.env): Config {
-  const addr = env.SPOTIFY_TOKENER_ADDR?.trim() || DEFAULT_ADDR;
+  const addr = env.DEFAULT_ADDRESS?.trim() || DEFAULT_ADDR;
   const { hostname, port } = parseAddr(addr);
 
   let logLevel: LogLevel = DEFAULT_LOG_LEVEL;

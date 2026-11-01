@@ -32,11 +32,11 @@ services:
     container_name: spotify-tokener
     restart: unless-stopped
     environment:
-#      - SPOTIFY_TOKENER_ADDR=0.0.0.0:8080
+#      - DEFAULT_ADDRESS=0.0.0.0:4000
 #      - SPOTIFY_TOKENER_LOG_LEVEL=INFO
 #      - SPOTIFY_TOKENER_TIMEOUT=30000
     ports:
-      - 8080:8080
+      - 4000:4000
 ```
 
 
